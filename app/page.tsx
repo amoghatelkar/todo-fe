@@ -1,65 +1,129 @@
-import Image from "next/image";
+'use client';
+import { TodoTable } from '@/app/components/TodoTable/TodoTable';
+import { useEffect, useState } from 'react';
+import { TodoForm } from './components/TodoForm/TodoForm';
+
+export interface ITodo {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  tags: string[];
+  endDate: string;
+  startDate: string;
+  email: string;
+  phone: string;
+  categories: string[];
+  color: string;
+  attachment: File | null; // add this
+}
+
+const initalFormData: ITodo = {
+  id: '',
+  title: "",
+  description: '',
+  startDate: '',
+  endDate: '',
+  tags: [],
+  categories: [],
+  status: '',
+  email: '',
+  phone: '',
+  priority: '',
+  color: '',
+  attachment: null
+}
 
 export default function Home() {
+
+  const [todos, setTodos] = useState<Array<ITodo>>([]);
+  const [todo, setTodo] = useState<ITodo>(initalFormData);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(e.target);
+    const formData = new FormData(e.currentTarget);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const todos: any = Object.fromEntries(formData.entries());
+    todos.tags = formData.getAll('tags');
+    todos.categories = formData.getAll("categories");
+    todos.startDate = todos.startDate ? new Date(todos.startDate).toISOString() : new Date().toISOString();
+    todos.endDate = todos.endDate ? new Date(todos.endDate).toISOString() : new Date().toISOString();
+    todos.modifiedAt = new Date().toISOString();
+    console.log(todos);
+
+    const { attachment, ...submitData } = todos;
+    if (!isEdit)
+      await postTodo(submitData);
+    else
+      await editTodo({ ...submitData , id: todo.id});
+  }
+
+  const postTodo = async (_todo: ITodo) => {
+    const data = JSON.stringify(_todo);
+    try {
+      const response = await fetch('http://localhost:4000/todo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: data
+      });
+      const res = await response.json();
+
+      await getTodos();
+
+      console.log(res);
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
+  const getTodos = async () => {
+    const response = await fetch('http://localhost:4000/todo');
+    const todos = await response.json();
+    setTodos(todos);
+  }
+
+  const deleteTodo = async (id: string) => {
+    const response = await fetch(`http://localhost:4000/todo/${id}`, {
+      method: 'DELETE'
+    });
+    const res = await response.json();
+    if (res)
+      await getTodos();
+  }
+
+  const editTodo = async (_todo: ITodo) => {
+    console.log("_todo",_todo);
+    const data = JSON.stringify(_todo);
+    const response = await fetch(`http://localhost:4000/todo/${_todo.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: data
+    });
+    console.log("response",response)
+    const res = await response.json();
+    if (res)
+      await getTodos();
+  }
+
+  useEffect(() => {
+    getTodos();
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div style={{ display: 'flex' }}>
+      <div>
+        <TodoForm handleOnSubmit={handleOnSubmit} todo={todo} isEdit={isEdit} />
+      </div>
+      <div>
+        <TodoTable todos={todos} onDelete={deleteTodo} onEdit={setTodo} setIsEdit={setIsEdit} />
+      </div>
     </div>
   );
 }

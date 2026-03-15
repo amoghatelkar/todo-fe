@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    //justify-content: center;
+    .wrapper {
+        display: block;
+
+        .form {
+            div {
+                margin-top: 5px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+                label{
+                    font-weight: bold;
+                }
+
+                input{
+                    width: fit-content;
+                }
+            }
+        }
+    }
+
+}
