@@ -3,6 +3,11 @@ import { TodoTable } from '@/app/components/TodoTable/TodoTable';
 import { useEffect, useState } from 'react';
 import { TodoForm } from './components/TodoForm/TodoForm';
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '') || 'http://localhost:4000';
+
+const getApiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
 export interface ITodo {
   id: string;
   title: string;
@@ -64,7 +69,7 @@ export default function Home() {
   const postTodo = async (_todo: ITodo) => {
     const data = JSON.stringify(_todo);
     try {
-      const response = await fetch('http://localhost:4000/todo', {
+      const response = await fetch(getApiUrl('/todo'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -82,13 +87,13 @@ export default function Home() {
   }
 
   const getTodos = async () => {
-    const response = await fetch('http://localhost:4000/todo');
+    const response = await fetch(getApiUrl('/todo'));
     const todos = await response.json();
     setTodos(todos);
   }
 
   const deleteTodo = async (id: string) => {
-    const response = await fetch(`http://localhost:4000/todo/${id}`, {
+    const response = await fetch(getApiUrl(`/todo/${id}`), {
       method: 'DELETE'
     });
     const res = await response.json();
@@ -99,7 +104,7 @@ export default function Home() {
   const editTodo = async (_todo: ITodo) => {
     console.log("_todo",_todo);
     const data = JSON.stringify(_todo);
-    const response = await fetch(`http://localhost:4000/todo/${_todo.id}`, {
+    const response = await fetch(getApiUrl(`/todo/${_todo.id}`), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

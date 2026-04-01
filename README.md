@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Todo Frontend
 
-## Getting Started
+This frontend is a Next.js app for the Todo backend.
 
-First, run the development server:
+## Local setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create a local env file:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Set the backend URL in `.env.local`.
+
+For local backend development:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+```
+
+For the deployed backend:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
+```
+
+4. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+The simplest deployment target for this Next.js app is Vercel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Before deploying, add this environment variable in the hosting platform:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
+```
 
-## Deploy on Vercel
+For Vercel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Import the `fe` directory from GitHub as a new project.
+2. Use the `Next.js` framework preset.
+3. Add `NEXT_PUBLIC_API_BASE_URL` in Project Settings -> Environment Variables.
+4. Deploy.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Official references:
+
+- [Next.js environment variables](https://nextjs.org/docs/pages/guides/environment-variables)
+- [Vercel environment variables](https://vercel.com/docs/environment-variables)
