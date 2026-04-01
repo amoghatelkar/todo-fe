@@ -22,12 +22,14 @@ For local backend development:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+BACKEND_API_BASE_URL=http://localhost:4000
 ```
 
 For the deployed backend:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
+BACKEND_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
 ```
 
 4. Start the app:
@@ -49,17 +51,18 @@ npm run start
 
 The simplest deployment target for this Next.js app is Vercel.
 
-Before deploying, add this environment variable in the hosting platform:
+Before deploying, add these environment variables in the hosting platform:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
+BACKEND_API_BASE_URL=http://todo-backend-prod-304789550280.us-east-1.elasticbeanstalk.com
 ```
 
 For Vercel:
 
 1. Import the `fe` directory from GitHub as a new project.
 2. Use the `Next.js` framework preset.
-3. Add `NEXT_PUBLIC_API_BASE_URL` in Project Settings -> Environment Variables.
+3. Add `NEXT_PUBLIC_API_BASE_URL` and `BACKEND_API_BASE_URL` in Project Settings -> Environment Variables.
 4. Deploy.
 
 Official references:
